@@ -1,0 +1,94 @@
+$grid-breakpoints: (
+  xs: 0,
+  sm: 576px,
+  md: 768px,
+  lg: 992px,
+  xl: 1200px,
+  xxl: 1400px,
+);
+
+$container-max-widths: (
+  sm: 540px,
+  md: 720px,
+  lg: 960px,
+  xl: 1170px,
+  xxl: 1320px,
+);
+
+$grid-gutter-width: 30px !default;
+$border-radius: 8px;
+
+%gutter-padding {
+  padding-left: calc(var(--grid-gutter-x) * 0.5);
+  padding-right: calc(var(--grid-gutter-x) * 0.5);
+}
+%style-button {
+  color: #fff;
+  font-size: 1.8rem;
+  font-weight: 600;
+  line-height: 1.67;
+}
+
+.container-fluid {
+  --grid-gutter-x: #{$grid-gutter-width};
+  --grid-gutter-y: 0;
+
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  // @extend %gutter-padding;
+}
+
+.container {
+  @extend .container-fluid;
+}
+
+@mixin make-media-query($dimension, $bypass: false) {
+  @if $bypass {
+    @content;
+  } @else {
+    @media (min-width: $dimension) {
+      @content;
+    }
+  }
+}
+
+@mixin flex-alignment($align-items: center, $justify-content: null) {
+  display: flex;
+  align-items: $align-items;
+  justify-content: $justify-content;
+}
+
+@mixin media-breakpoint-down($breakpoint) {
+  $max-width: map-get($grid-breakpoints, $breakpoint);
+  @if $max-width {
+    @media (max-width: $max-width) {
+      @content;
+    }
+  } @else {
+    @content;
+  }
+}
+
+@mixin media-breakpoint-up($breakpoint) {
+  $min-width: map-get($grid-breakpoints, $breakpoint);
+
+  @if $min-width {
+    @media (min-width: $min-width) {
+      @content;
+    }
+  } @else {
+    @content;
+  }
+}
+
+@each $breakpoint, $dimension in $grid-breakpoints {
+  $max-width: map-get($container-max-widths, $breakpoint);
+  $is-xs: $breakpoint == xs;
+
+  @include make-media-query($dimension, $bypass: $is-xs) {
+    .container {
+      max-width: $max-width;
+    }
+  }
+}
